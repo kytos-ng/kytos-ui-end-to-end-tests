@@ -44,11 +44,11 @@ SELECTORS = {
     'vlan_z_input': (By.ID, "endpoint-z-tag-value"),
     
     # Optional fields (Kytos UI patterns)
-    'service_level_select': (By.CSS_SELECTOR, "select[class='k-dropdown__select']"),
-    'priority_select': (By.CSS_SELECTOR, "select[class='k-dropdown__select']"),
-    'max_paths_input': (By.CSS_SELECTOR, "input[class='k-input']"),
-    'qos_queue_select': (By.CSS_SELECTOR, "select[class='k-select__select']"),
-    'enable_int_checkbox': (By.CSS_SELECTOR, "input[type='checkbox']"),
+    'service_level_select': (By.ID, "service-level-input"),
+    'priority_select': (By.ID, "sb-priority-input"),
+    'max_paths_input': (By.ID, "max_paths"),
+    'qos_queue_select': (By.XPATH, "//*[@id='mef_eline_toolbar_form']/label/select"),
+    'enable_int_checkbox': (By.CLASS_NAME, "slider"),
     
     # Buttons (Kytos uses k-button class)
     'submit_button': (By.XPATH, "//*[@id='app']/div[1]/div/div[5]/div/div/button"),
@@ -177,10 +177,12 @@ def test_data():
             },
             {
                 "name": "Full_Feature_Circuit",
-                "endpoint_a": "Switch01:eth2",
-                "vlan_a": "200",
-                "endpoint_z": "Switch03:eth1",
-                "vlan_z": "201",
+                "endpoint_a": "00:00:00:00:00:00:00:18:13",
+                "endpoint_a_field": "00:00:00:00:00:00:00:18: mia_s18-eth13",
+                "vlan_a": "104",
+                "endpoint_z": "00:00:00:00:00:00:00:18:8",
+                "endpoint_z_field": "00:00:00:00:00:00:00:18: mia_s18-eth8",
+                "vlan_z": "100",
                 "service_level": "5",
                 "priority": "high",
                 "max_paths": "3",
@@ -319,18 +321,20 @@ def fill_circuit_form(driver, circuit_data):
     # Fill optional fields if provided
     if circuit_data.get("service_level"):
         try:
-            service_select = Select(driver.find_element(*SELECTORS['service_level_select']))
-            service_select.select_by_value(circuit_data["service_level"])
+            service_select = driver.find_element(*SELECTORS['service_level_select'])
+            service_select.clear()
+            service_select.send_keys(str(circuit_data["service_level"]))
         except NoSuchElementException:
             print("Service level field not found")
     
     if circuit_data.get("priority"):
         try:
-            priority_select = Select(driver.find_element(*SELECTORS['priority_select']))
-            priority_select.select_by_visible_text(circuit_data["priority"])
+            priority_select = driver.find_element(*SELECTORS['priority_select'])
+            priority_select.clear()
+            priority_select.send_keys(str(circuit_data["priority"]))
         except NoSuchElementException:
             print("Priority field not found")
-    
+
     if circuit_data.get("max_paths"):
         try:
             max_paths_input = driver.find_element(*SELECTORS['max_paths_input'])
@@ -338,21 +342,24 @@ def fill_circuit_form(driver, circuit_data):
             max_paths_input.send_keys(circuit_data["max_paths"])
         except NoSuchElementException:
             print("Max paths field not found")
-    
-    if circuit_data.get("qos_queue"):
-        try:
-            qos_select = Select(driver.find_element(*SELECTORS['qos_queue_select']))
-            qos_select.select_by_visible_text(circuit_data["qos_queue"])
-        except NoSuchElementException:
-            print("QoS queue field not found")
-    
+
     if circuit_data.get("enable_int"):
         try:
             int_checkbox = driver.find_element(*SELECTORS['enable_int_checkbox'])
-            if not int_checkbox.is_selected():
-                int_checkbox.click()
+            int_checkbox.click()
         except NoSuchElementException:
             print("Enable INT checkbox not found")
+
+    if circuit_data.get("qos_queue"):
+        try:
+            qos_select = driver.find_element(*SELECTORS['qos_queue_select'])
+            qos_select.click()
+            qos_select_value=driver.find_element(By.XPATH,"//*[@id='mef_eline_toolbar_form']/label/select/option[4]")
+            qos_select_value.click()
+        except NoSuchElementException:
+            print("QoS queue field not found")
+
+
 
 
 def submit_form(driver):
@@ -470,9 +477,30 @@ class TestPositiveEVCCreation:
         assert circuit_id is not None, f"Circuit '{circuit_data['name']}' not found in API"
         
         print(f"✅ TC_001 PASSED. EVC with circuit id "+circuit_id+" created and deleted successfully")
-    
 
+    def test_tc_002_create_evc_all_optional_fields(self, driver, test_data):
+        """
+        TC_CREATE_EVC_002: Create EVC with All Optional Fields
 
+        Objective: Verify EVC creation with all fields populated
+        """
+        print("\\n=== TC_002: Create EVC with all optional fields ===")
+
+        circuit_data = test_data["valid_circuits"][1]  # Full_Feature_Circuit
+
+        # Navigate to EVC creation form
+        assert navigate_to_evc_form(driver), "Failed to navigate to EVC creation form"
+
+        # Fill and submit form with all optional fields
+        fill_circuit_form(driver, circuit_data)
+        submit_form(driver)
+        time.sleep(3)
+
+        # Verify via API
+        circuit_id = verify_circuit_via_api(circuit_data["name"])
+        assert circuit_id is not None, f"Circuit '{circuit_data['name']}' not found in API"
+
+        print(f"✅ TC_002 PASSED: Full-feature circuit created with ID {circuit_id}")
 
 
 
