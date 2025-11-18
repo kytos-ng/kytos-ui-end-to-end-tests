@@ -191,10 +191,10 @@ def test_data():
             },
             {
                 "name": "VLAN_Range_Circuit",
-                "endpoint_a": "Switch01:eth3",
-                "vlan_a": "[[100, 200]]",
-                "endpoint_z": "Switch02:eth3",
-                "vlan_z": "[[100, 200]]"
+                "endpoint_a": "00:00:00:00:00:00:00:18:13",
+                "vlan_a": "[100, 200]",
+                "endpoint_z": "00:00:00:00:00:00:00:18:8",
+                "vlan_z": "[100, 200]"
             }
         ],
         "invalid_circuits": [
@@ -501,6 +501,30 @@ class TestPositiveEVCCreation:
         assert circuit_id is not None, f"Circuit '{circuit_data['name']}' not found in API"
 
         print(f"✅ TC_002 PASSED: Full-feature circuit created with ID {circuit_id}")
+
+    def test_tc_003_create_evc_vlan_range(self, driver, test_data):
+        """
+        TC_CREATE_EVC_003: Create EVC with VLAN Range
+
+        Objective: Verify EVC creation with VLAN range notation
+        """
+        print("\\n=== TC_003: Create EVC with VLAN range ===")
+
+        circuit_data = test_data["valid_circuits"][2]  # VLAN_Range_Circuit
+
+        # Navigate to EVC creation form
+        assert navigate_to_evc_form(driver), "Failed to navigate to EVC creation form"
+
+        # Fill and submit form with VLAN ranges
+        fill_circuit_form(driver, circuit_data)
+        submit_form(driver)
+        time.sleep(3)
+
+        # Verify via API
+        circuit_id = verify_circuit_via_api(circuit_data["name"])
+        assert circuit_id is not None, f"Circuit '{circuit_data['name']}' not found in API"
+
+        print(f"✅ TC_003 PASSED: VLAN range circuit created with ID {circuit_id}")
 
 
 
