@@ -17,6 +17,9 @@ import pytest
 import time
 import requests
 import json
+import os
+import platform
+from pathlib import Path
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
@@ -25,8 +28,18 @@ from selenium.webdriver.support.ui import Select
 from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.chrome.options import Options
 from selenium.common.exceptions import TimeoutException, NoSuchElementException
-import platform
-import os
+
+# Load environment variables
+try:
+    from dotenv import load_dotenv
+    # Find the .env file (look in parent directory since tests/ is a subdirectory)
+    env_path = Path(__file__).parent.parent / '.env'
+    load_dotenv(env_path)
+    print(f"Loaded environment variables from: {env_path}")
+except ImportError:
+    print("python-dotenv not installed, using default values")
+except Exception as e:
+    print(f"Error loading .env file: {e}")
 
 
 # =============================================================================
@@ -60,10 +73,14 @@ SELECTORS = {
     'validation_error': (By.CSS_SELECTOR, ".validation-error, [class*='error']"),
 }
 
-# Test Configuration
-BASE_URL = "http://190.103.184.199:18181"
-API_BASE_URL = "http://190.103.184.199:18181/api/kytos/mef_eline/v2/evc/"
-DEFAULT_TIMEOUT = 10
+# Test Configuration from environment variables
+BASE_URL = os.getenv('BASE_URL', 'http://190.103.184.199:18181')
+API_BASE_URL = os.getenv('API_BASE_URL', 'http://190.103.184.199:18181/api/kytos/mef_eline/v2/evc/')
+DEFAULT_TIMEOUT = int(os.getenv('DEFAULT_TIMEOUT', '10'))
+
+print(f"Using BASE_URL: {BASE_URL}")
+print(f"Using API_BASE_URL: {API_BASE_URL}")
+print(f"Using DEFAULT_TIMEOUT: {DEFAULT_TIMEOUT}")
 
 
 # =============================================================================
