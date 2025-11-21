@@ -74,8 +74,8 @@ SELECTORS = {
 }
 
 # Test Configuration from environment variables
-BASE_URL = os.getenv('BASE_URL', 'http://190.103.184.199:18181')
-API_BASE_URL = os.getenv('API_BASE_URL', 'http://190.103.184.199:18181/api/kytos/mef_eline/v2/evc/')
+BASE_URL = os.getenv('BASE_URL')
+API_BASE_URL = os.getenv('API_BASE_URL')
 DEFAULT_TIMEOUT = int(os.getenv('DEFAULT_TIMEOUT', '10'))
 
 print(f"Using BASE_URL: {BASE_URL}")
