@@ -1,5 +1,6 @@
 import pytest
 import logging
+import os
 from selenium import webdriver
 from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.chrome.options import Options
@@ -9,7 +10,7 @@ from webdriver_manager.chrome import ChromeDriverManager
 @pytest.fixture(scope="session")
 def base_url():
     """Base URL for the Kytos UI instance"""
-    return "http://190.103.184.199:18181"
+    return os.getenv('BASE_URL')
 
 
 @pytest.fixture(scope="function")
