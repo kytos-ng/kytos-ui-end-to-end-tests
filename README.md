@@ -8,14 +8,14 @@ This repository contains end-to-end (E2E) tests for the Kytos UI, organized by N
 - ✅ NApp sdntrace
 - ✅ NApp sdntrace_cp
 
-Documentation in https://docs.google.com/document/d/13e6SSp5CKdxAmwXBl39f3AvIot_rDG6WltE3k0qtgoM/edit?tab=t.0. 
+Documentation: https://docs.google.com/document/d/13e6SSp5CKdxAmwXBl39f3AvIot_rDG6WltE3k0qtgoM/edit?tab=t.0. 
 
 ## Target System
 
 - **Kytos UI Instance**
 - **API Endpoint**: 
     - `POST /api/kytos/mef_eline/v2/evc/`
-    - `POST /api/kytos/sdntrace/v1/traces/`
+    - `POST /api/amlight/sdntrace/v1/traces/`
 
 ## Prerequisites
 

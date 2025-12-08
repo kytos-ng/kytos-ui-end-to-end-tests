@@ -44,10 +44,10 @@ class EVCPage:
         'evc_table_first_row_name': (By.XPATH,"//*[@id='mef-table-list-circuit']/tbody/tr/td[1]")
     }
 
-    def __init__(self, driver: WebDriver, base_url: str, api_base_url: str, default_timeout: int):
+    def __init__(self, driver: WebDriver, base_url: str, api_url: str, default_timeout: int):
         self.driver = driver
         self.base_url = base_url
-        self.api_base_url = api_base_url
+        self.api_base_url = api_url
         self.wait = WebDriverWait(driver, default_timeout)
         self.default_timeout = default_timeout
 
@@ -152,7 +152,7 @@ class EVCPage:
                 print("QoS queue field not found")
 
     def submit_form(self):
-        """Submit the EVC creation form (Original submit_form logic)."""
+        """Submit the EVC creation form."""
         submit_button = self.driver.find_element(*self.SELECTORS['submit_button'])
         submit_button.click()
         time.sleep(2)
