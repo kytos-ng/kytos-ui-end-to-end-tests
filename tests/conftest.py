@@ -28,9 +28,10 @@ def base_url():
     return os.getenv('BASE_URL', 'http://localhost:18181')
 
 @pytest.fixture(scope="session")
-def api_base_url():
+def api_url(request) -> str:
     """Base URL for the Kytos API."""
-    return os.getenv('API_BASE_URL', 'http://localhost:18181/api/kytos/mef_eline/v2/evcs/')
+    env_var, default = request.param
+    return os.getenv(env_var, default)
 
 @pytest.fixture(scope="session")
 def default_timeout():
@@ -75,7 +76,7 @@ def driver(default_timeout):
 # --- Fixture for Test Data ---
 
 @pytest.fixture
-def test_data():
+def evc_test_data():
     """Test data for EVC creation tests"""
     return {
         "valid_circuits": [
@@ -140,5 +141,51 @@ def test_data():
             "max_vlan": "4094",
             "invalid_vlan": "4095",
             "long_name": "a" * 256
+        }
+    }
+
+
+@pytest.fixture
+def sdntrace_test_data():
+    """Test data for SDNTrace"""
+    return {
+        "valid_basic_data": {
+            "dpid": "00:00:00:00:00:00:00:14",
+            "port": "13"
+        },
+        "valid_trace": {
+            "dpid": "00:00:00:00:00:00:00:14",
+            "port": "13",
+            "dl_vlan": "300",
+            "dl_type": "2048",
+            "dl_src": "1",
+            "dl_dst": "a1:b2:c3:d4:e5:f6",
+            "nw_src": "10.10.10.1",
+            "nw_dst": "10.10.10.254",
+            "nw_proto": "6",        
+            "nw_tos": "2",
+            "tp_src": "1234",
+            "tp_dst": "80",
+        },
+        "non_existent_dpid": {
+            "dpid": "00:00:00:00:00:00:00:01",
+            "port": "13"
+        },
+        "invalid_dpid": {
+            "dpid": "ff:ff:ff:ff:ff:ff:ff:ff",
+            "port": "13"
+        },
+        "non_existent_port": {
+            "dpid": "00:00:00:00:00:00:00:18",
+            "port": "9999"
+        },
+        "invalid_port": {
+            "dpid": "00:00:00:00:00:00:00:18",
+            "port": "a"
+        },
+        "invalid_nw_tos": {
+            "dpid": "00:00:00:00:00:00:00:18",
+            "port": "13",
+            "nw_tos": "20",
         }
     }
