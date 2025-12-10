@@ -16,6 +16,7 @@ Documentation: https://docs.google.com/document/d/13e6SSp5CKdxAmwXBl39f3AvIot_rD
 - **API Endpoint**: 
     - `POST /api/kytos/mef_eline/v2/evc/`
     - `POST /api/amlight/sdntrace/v1/traces/`
+    - `POST /api/kytos/maintenance/v1/`
 
 ## Prerequisites
 

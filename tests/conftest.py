@@ -1,8 +1,6 @@
 import os
 import pytest
-import time
-import requests
-import json
+import datetime
 from pathlib import Path
 from selenium import webdriver
 from selenium.webdriver.chrome.service import Service
@@ -40,7 +38,7 @@ def default_timeout():
 
 # --- Fixture for WebDriver Setup ---
 
-@pytest.fixture(scope="function")
+@pytest.fixture(scope="session")
 def driver(default_timeout):
     """
     Pytest fixture to set up and tear down the Selenium WebDriver (ChromeDriver).
@@ -188,4 +186,60 @@ def sdntrace_test_data():
             "port": "13",
             "nw_tos": "20",
         }
+    }
+
+def get_future_time_data(days_from_now=2):
+    """Generates start and end time data for a maintenance window in the near future."""
+    # The format required is 'yyyy-mm-ddThh:mm:ss+0000'
+    
+    now = datetime.datetime.now(datetime.timezone.utc)
+    start_time = now + datetime.timedelta(days=days_from_now)
+    end_time = now + datetime.timedelta(days=days_from_now, hours=1)
+
+    time_format = "%Y-%m-%dT%H:%M:%S+0000"
+    
+    start_time_str = start_time.strftime(time_format) 
+    end_time_str = end_time.strftime(time_format)
+    
+    return {
+        "start_time": start_time_str,
+        "end_time": end_time_str
+    }
+
+@pytest.fixture
+def maintenance_test_data():
+    """Test data for maintenance"""
+    time_data = get_future_time_data()
+    time_data_past = time_data.copy()
+    time_data_past["start_time"] = time_data_past["start_time"].replace("2025", "2024")
+    time_data_wrong_format = time_data.copy()
+    time_data_wrong_format["start_time"] = time_data_wrong_format["start_time"].split('T')[0]
+    
+    return {
+        "valid_data": [
+            {**{
+                "description": "Valid data",
+                "switches": ["MIA-MI1-SW14"],
+                "interfaces": ["00:00:00:00:00:00:00:14:32"],
+                "links": ["e879d80c5907429087330d24ac29f6fc78513c02bb21f91212d0dd0db89a7d55"],
+            }, **get_future_time_data(3)},
+            {**{
+                "description": "Valid data - multiple switches",
+                "switches": ["MIA-MI1-SW14","SJU-H787-SW02"],
+            }, **get_future_time_data(4)}
+        ],
+        "invalid_data": [
+            {**{
+                "description": "Invalid data - empty lists",
+                "switches": [],
+            }, **time_data},
+            {**{
+                "description": "Invalid data - past time",
+                "switches": ["MIA-MI1-SW14"],
+            }, **time_data_past},
+            {**{
+                "description": "Invalid data - unexpected time format",
+                "switches": ["MIA-MI1-SW14"],
+            }, **time_data_wrong_format}
+        ]
     }

@@ -56,11 +56,6 @@ class SDNTRACEPage:
         self.wait = WebDriverWait(driver, default_timeout)
         self.default_timeout = default_timeout
 
-    def _find(self, locator_name):
-        """Helper to find an element by locator name."""
-        by, value = self.SELECTORS[locator_name]
-        return self.wait.until(EC.presence_of_element_located((by, value)))
-
     def navigate_to_sdntrace_form(self):
         """Navigate from homepage to SDNTrace form."""
         self.driver.get(self.base_url)
