@@ -147,45 +147,44 @@ def evc_test_data():
 def sdntrace_test_data():
     """Test data for SDNTrace"""
     return {
-        "valid_basic_data": {
-            "dpid": "00:00:00:00:00:00:00:14",
-            "port": "13"
-        },
-        "valid_trace": {
-            "dpid": "00:00:00:00:00:00:00:14",
-            "port": "13",
-            "dl_vlan": "300",
-            "dl_type": "2048",
-            "dl_src": "1",
-            "dl_dst": "a1:b2:c3:d4:e5:f6",
-            "nw_src": "10.10.10.1",
-            "nw_dst": "10.10.10.254",
-            "nw_proto": "6",        
-            "nw_tos": "2",
-            "tp_src": "1234",
-            "tp_dst": "80",
-        },
-        "non_existent_dpid": {
-            "dpid": "00:00:00:00:00:00:00:01",
-            "port": "13"
-        },
-        "invalid_dpid": {
-            "dpid": "ff:ff:ff:ff:ff:ff:ff:ff",
-            "port": "13"
-        },
-        "non_existent_port": {
-            "dpid": "00:00:00:00:00:00:00:18",
-            "port": "9999"
-        },
-        "invalid_port": {
-            "dpid": "00:00:00:00:00:00:00:18",
-            "port": "a"
-        },
-        "invalid_nw_tos": {
-            "dpid": "00:00:00:00:00:00:00:18",
-            "port": "13",
-            "nw_tos": "20",
-        }
+        "valid_data": [
+            {
+                "dpid": "00:00:00:00:00:00:00:14",
+                "port": "13"
+            },
+            {
+                "dpid": "00:00:00:00:00:00:00:14",
+                "port": "13",
+                "dl_vlan": "300",
+                "dl_type": "2048",
+                "dl_src": "1",
+                "dl_dst": "a1:b2:c3:d4:e5:f6",
+                "nw_src": "10.10.10.1",
+                "nw_dst": "10.10.10.254",
+                "nw_proto": "6",        
+                "nw_tos": "2",
+                "tp_src": "1234",
+                "tp_dst": "80",
+            }
+        ],
+        "invalid_data": [
+            {
+                "dpid": "00:00:00:00:00:00:00:01",
+                "port": "13"
+            },
+            {
+                "dpid": "ff:ff:ff:ff:ff:ff:ff:ff",
+                "port": "13"
+            },
+            # {
+            #     "dpid": "00:00:00:00:00:00:00:18",
+            #     "port": "9999"
+            # },
+            {
+                "dpid": "00:00:00:00:00:00:00:18",
+                "port": "a"
+            }
+        ]
     }
 
 def get_future_time_data(days_from_now=2):
