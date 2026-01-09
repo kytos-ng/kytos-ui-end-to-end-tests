@@ -12,17 +12,6 @@ class TestPositiveEVCCreation:
         """Initialize EVCPage object before each test."""
         self.pathfinder_page = PathfinderPage(driver, base_url, api_url, default_timeout)
 
-    def teardown_method(self):
-        """Cleanup after each test."""
-        test_circuits = [
-            "Test_Circuit_001",
-            "Full_Feature_Circuit",
-            "VLAN_Range_Circuit",
-            "Performance_Test_Circuit"
-        ]
-        for circuit in test_circuits:
-            self.pathfinder_page.cleanup_test_circuit(circuit)
-
     def test_001_calculate_basic_path(self, pathfinder_test_data):
         """
         Create Basic EVC with Minimum Required Fields
