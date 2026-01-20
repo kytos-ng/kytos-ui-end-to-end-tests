@@ -262,7 +262,8 @@ def pathfinder_test_data():
                 "delay": "4",
                 "utilization": "3",
                 "priority": "2",
-                "spfhop": "1"
+                "spf_max_paths": "10",
+                "spf_max_path_cost": "100"
             }
         ]
     }

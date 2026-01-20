@@ -29,7 +29,8 @@ class PathfinderPage:
         # Optional fields
         'utilization': (By.XPATH, "//*[@id='app']/div[1]/div/div[7]/div/div/div/div/div[8]/div[3]/input"),
         'priority': (By.XPATH, "//*[@id='app']/div[1]/div/div[7]/div/div/div/div/div[9]/div[3]/input"),
-        'spfhop': (By.XPATH, "//*[@id='app']/div[1]/div/div[7]/div/div/div/div/div[14]/div/div/input"),
+        'spf_max_paths': (By.XPATH, "//*[@id='app']/div[1]/div/div[7]/div/div/div/div/div[14]/div/div/input"),
+        'spf_max_path_cost': (By.XPATH, "//*[@id='app']/div[1]/div/div[7]/div/div/div/div/div[15]/div/div/input"),
 
         # Buttons
         'submit_button': (By.XPATH, "//*[@id='app']/div[1]/div/div[7]/div/div/div/div/div[16]/button")
@@ -129,13 +130,21 @@ class PathfinderPage:
             except NoSuchElementException:
                 print("priority field not found")
 
-        if test_data.get("spfhop"):
+        if test_data.get("spf_max_paths"):
             try:
-                spfhop = self.driver.find_element(*self.SELECTORS['spfhop'])
-                spfhop.clear()
-                spfhop.send_keys(str(test_data["spfhop"]))
+                spf_max_paths = self.driver.find_element(*self.SELECTORS['spf_max_paths'])
+                spf_max_paths.clear()
+                spf_max_paths.send_keys(str(test_data["spf_max_paths"]))
             except NoSuchElementException:
-                print("spfhop field not found")
+                print("spf_max_paths field not found")
+
+        if test_data.get("spf_max_path_cost"):
+            try:
+                spf_max_path_cost = self.driver.find_element(*self.SELECTORS['spf_max_path_cost'])
+                spf_max_path_cost.clear()
+                spf_max_path_cost.send_keys(str(test_data["spf_max_path_cost"]))
+            except NoSuchElementException:
+                print("spf_max_path_cost field not found")
 
 
     def submit_form(self):
