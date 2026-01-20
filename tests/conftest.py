@@ -243,3 +243,27 @@ def maintenance_test_data():
             }, **time_data_wrong_format}
         ]
     }
+
+
+@pytest.fixture
+def pathfinder_test_data():
+    """Test data for EVC creation tests"""
+    return {
+        "valid_data": [
+            {
+                "source": "00:00:00:00:00:00:00:14:9",
+                "destination": "00:00:00:00:00:04:00:02:15"
+            },
+            {
+                "source": "00:00:00:00:00:00:00:14:9",
+                "destination": "00:00:00:00:00:04:00:02:15",
+                "bandwidth": "10",
+                "reliability": "5",
+                "delay": "4",
+                "utilization": "3",
+                "priority": "2",
+                "spf_max_paths": "10",
+                "spf_max_path_cost": "100"
+            }
+        ]
+    }
