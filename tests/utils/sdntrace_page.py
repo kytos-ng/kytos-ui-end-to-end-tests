@@ -38,15 +38,14 @@ class SDNTRACEPage:
         'submit_button': (By.XPATH, "//button[contains(., 'Start Trace') and not(@disabled)]"),
         'reset_button': (By.XPATH, "//button[contains(., 'Reset') and not(@disabled)]"),
         'view_all_traces_button': (By.XPATH, "//button[contains(., 'View All Traces') and not(@disabled)]"),
-        
+
         # Messages
         'form_message_title': (By.CLASS_NAME, "notification-text notification-title"),
         'form_message_description': (By.CLASS_NAME, "notification-text notification-description"),
         'validation_error': (By.CSS_SELECTOR, ".validation-error, [class*='error']"),
 
         # Table element for verification
-        'trace_table_first_row_dpid': (By.XPATH,"//*[@id='k-info-wrapper-id']/div/div/div[1]/div/div/table/tbody/tr[1]/td[2]"),
-        'trace_table_first_row_port': (By.XPATH,"//*[@id='k-info-wrapper-id']/div/div/div[1]/div/div/table/tbody/tr[1]/td[5]")
+        'trace_table_rows': (By.CSS_SELECTOR, "div[id^='k-info-wrapper-id'] table tbody tr")
     }
 
     def __init__(self, driver: WebDriver, base_url: str, api_url: str, default_timeout: int):
@@ -134,8 +133,8 @@ class SDNTRACEPage:
             messages['validation_errors'] = []
         
         return messages
-
-    def verify_traces_via_api(self, dpid, port):
+    
+    def verify_traces_via_api(self, trace_id):
         """Verify trace via API."""
         start_time = time.time()
         while time.time() - start_time < self.default_timeout:
@@ -143,27 +142,135 @@ class SDNTRACEPage:
                 response = requests.get(self.api_base_url)
                 if response.status_code == 200:
                     traces = response.json()
-                    traces = [(entry["dpid"], entry["port"]) for _, data in traces.items() for entry in data["result"] if "dpid" in entry]
-                    if (dpid, int(port)) in traces:
-                        return traces
+                    traces_id = [data['request_id'] for data in traces.values()]
+                    if trace_id in traces_id:
+                        return trace_id
                 time.sleep(2)
             except Exception as e:
                 print(f"API check error: {e}")
                 time.sleep(2)
         return None
-
+    
     def click_view_all_traces(self):
         """Clicks the 'View All Traces' button."""
         list_button = self.driver.find_element(*self.SELECTORS['view_all_traces_button'])
         list_button.click()
         time.sleep(3) # Wait for the list to load
-
-    def get_first_dpid_from_table(self):
-        """Gets the first trace in the table."""
-        trace_dpid = self.driver.find_element(*self.SELECTORS['trace_table_first_row_dpid'])
-        return trace_dpid.text
     
-    def get_first_port_from_table(self):
-        """Gets the first trace in the table."""
-        trace_dpid = self.driver.find_element(*self.SELECTORS['trace_table_first_row_port'])
-        return trace_dpid.text
+    def get_id_traces_in_table(self):
+        """Return list of traces id in the table."""
+        try:
+            self.wait.until(EC.presence_of_element_located(self.SELECTORS['trace_table_rows']))
+        except Exception as e:
+            print(f"The trace table did not appear within the expected time. {e}")
+            return False
+        
+        rows = self.driver.find_elements(*self.SELECTORS['trace_table_rows'])
+        
+        ids = set([int(row.find_element(By.XPATH, "./td[1]").text.strip()) for row in rows])
+        return list(ids)
+
+    def is_trace_in_table(self, list_traces, dpid, port):
+        """Search for a row with dpid and port"""
+        _ID_IN_ROW = "./td[1]"      
+        _DPID_IN_ROW = "./td[2]"      
+        _PORT_IN_ROW = "./td[5]"
+        try:
+            self.wait.until(EC.presence_of_element_located(self.SELECTORS['trace_table_rows']))
+        except Exception as e:
+            print(f"The trace table did not appear within the expected time. {e}")
+            return False
+        
+        rows = self.driver.find_elements(*self.SELECTORS['trace_table_rows'])
+        
+        for row in rows:
+            try:
+                row_id = int(row.find_element(By.XPATH, _ID_IN_ROW).text.strip())
+                row_dpid = row.find_element(By.XPATH, _DPID_IN_ROW).text.strip()
+                row_port = row.find_element(By.XPATH, _PORT_IN_ROW).text.strip()
+                if row_dpid == dpid and row_port == port and row_id not in list_traces:
+                    return row_id
+            except:
+                continue  
+        return None
+ 
+    def click_fetch_button(self, list_traces, dpid, port):
+        """Click on Fetch"""
+        selector = (By.XPATH, "//button[.//text()[contains(., 'Fetch Trace')]]")
+
+        fetch_button = None
+        try:
+            fetch_button = self.wait.until(EC.element_to_be_clickable(selector))
+        except Exception:
+            raise AssertionError("Fetch button not found")
+
+        # Scroll + clic con JavaScript (infalible)
+        self.driver.execute_script("arguments[0].scrollIntoView({block: 'center'});", fetch_button)
+        time.sleep(0.5)
+        self.driver.execute_script("arguments[0].click();", fetch_button)
+
+        return self.is_trace_in_table(list_traces, dpid, port)
+
+    def click_view_button_for_trace(self, trace_id):
+        """Click on View button for trace_id"""
+        
+        buttons = self.driver.find_elements(By.XPATH, "//button[contains(normalize-space(.), 'View') or contains(. ,'View')]")
+        rows = self.driver.find_elements(*self.SELECTORS['trace_table_rows'])
+        trs_info = []
+        for row in rows:
+            loc = row.location_once_scrolled_into_view
+            y = loc.get("y", loc.get("y", 0)) if isinstance(loc, dict) else row.location.get("y", 0)
+            id_text = row.find_element(By.XPATH, "./td[1]").text.strip()
+            trs_info.append({"element": row, "y": float(y), "id": id_text})
+        if not trs_info:
+            raise AssertionError(f"No table rows available to match trace_id '{trace_id}'")
+        # sort trs by y (top -> bottom)
+        trs_info.sort(key=lambda x: x["y"])
+
+        for btn in buttons:
+            btn_loc = btn.location_once_scrolled_into_view
+            btn_y = btn_loc.get("y", btn.location.get("y", 0)) if isinstance(btn_loc, dict) else btn.location.get("y", 0)
+            candidate = None
+            for idx, tr in enumerate(trs_info):
+                if tr["y"] > btn_y:
+                    candidate = (idx, tr)
+                    break
+            if candidate is None:
+                candidate = (len(trs_info)-1, trs_info[-1])
+            idx, tr_info = candidate
+            check_candidates = [tr_info]
+            if idx + 1 < len(trs_info):
+                check_candidates.append(trs_info[idx + 1])
+
+            match_found = False
+            for check in check_candidates:
+                id_val = (check["id"] or "").strip()
+                if id_val == str(trace_id):
+                    match_found = True
+                    break
+
+            if match_found:
+                self.driver.execute_script("arguments[0].scrollIntoView({block: 'center'});", btn)
+                time.sleep(0.2)
+                self.driver.execute_script("arguments[0].click();", btn)
+                print(f"✔ Clicked View button matched to trace_id '{trace_id}'")
+                
+                return self.is_trace_id_in_table(trace_id)
+            
+        raise AssertionError(f"Could not locate/click View for trace_id '{trace_id}'")
+        
+    def is_trace_id_in_table(self, trace_id):
+        """check that the trace is displayed"""
+        try:
+            self.wait.until(EC.presence_of_element_located(self.SELECTORS['trace_table_rows']))
+        except Exception as e:
+            return False
+        rows = self.driver.find_elements(*self.SELECTORS['trace_table_rows'])
+        for row in rows:
+            try:
+                row_id = int(row.find_element(By.XPATH, "./td[1]").text.strip())
+                if row_id == trace_id:
+                    return row_id
+            except:
+                continue  
+        return None
