@@ -18,16 +18,16 @@ class MaintenancePage:
         'maintenance_button': (By.CSS_SELECTOR, 'button[data-test="main-button"][title="Maintenace"]'),
         
         # Form fields
-        'description': (By.XPATH, "//*[@id='app']/div[1]/div/div[3]/div/div[1]/div/div[1]/input"),
-        'start_time': (By.XPATH, "//*[@id='app']/div[1]/div/div[3]/div/div[1]/div/div[2]/div[1]/input"),
-        'end_time': (By.XPATH, "//*[@id='app']/div[1]/div/div[3]/div/div[1]/div/div[2]/div[2]/input"),
-        'time_date': (By.XPATH, "//*[@id='app']/div[1]/div/div[3]/div/div[1]/div/div[3]"), 
+        'description': (By.XPATH, "//*[@id='app']/div[1]/div/div[4]/div/div[1]/div/div[1]/input"),
+        'start_time': (By.XPATH, "//*[@id='app']/div[1]/div/div[4]/div/div[1]/div/div[2]/div[1]/input"),
+        'end_time': (By.XPATH, "//*[@id='app']/div[1]/div/div[4]/div/div[1]/div/div[2]/div[2]/input"),
+        'time_date': (By.XPATH, "//*[@id='app']/div[1]/div/div[4]/div/div[1]/div/div[3]"), 
         
-        'switches': (By.XPATH, "//*[@id='app']/div[1]/div/div[3]/div/div[1]/div/label[1]/select"),
-        'interfaces': (By.XPATH, "//*[@id='app']/div[1]/div/div[3]/div/div[1]/div/label[2]/select"),
-        'links': (By.XPATH, "//*[@id='app']/div[1]/div/div[3]/div/div[1]/div/label[3]/select"),
+        'switches': (By.XPATH, "//*[@id='app']/div[1]/div/div[4]/div/div[1]/div/label[1]/select"),
+        'interfaces': (By.XPATH, "//*[@id='app']/div[1]/div/div[4]/div/div[1]/div/label[2]/select"),
+        'links': (By.XPATH, "//*[@id='app']/div[1]/div/div[4]/div/div[1]/div/label[3]/select"),
 
-        'force': (By.XPATH, "//*[@id='app']/div[1]/div/div[3]/div/div[1]/div/div[4]/label/span"),
+        'force': (By.XPATH, "//*[@id='app']/div[1]/div/div[4]/div/div[1]/div/div[4]/label/span"),
         
         # Buttons
         'submit_button': (By.XPATH, "//button[contains(., 'Create Maintenance Window') and not(@disabled)]"),
