@@ -211,7 +211,6 @@ def maintenance_test_data():
     """Test data for maintenance"""
     time_data = get_future_time_data()
     time_data_past = time_data.copy()
-    time_data_past["start_time"] = time_data_past["start_time"].replace("2025", "2024")
     time_data_past["start_time"] = "2024-03-02T14:35:20+0000"
     time_data_wrong_format = time_data.copy()
     time_data_wrong_format["start_time"] = time_data_wrong_format["start_time"].split('T')[0]
