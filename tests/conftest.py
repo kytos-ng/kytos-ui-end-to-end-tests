@@ -81,19 +81,19 @@ def evc_test_data():
             {
                 "name": "Test_Circuit_001",
                 "endpoint_a": "00:00:00:00:00:00:00:18:13",
-                "endpoint_a_field": "00:00:00:00:00:00:00:18: mia_s18-eth13",
+                "endpoint_a_field": "mia",
                 "vlan_a": "104",
                 "endpoint_z": "00:00:00:00:00:00:00:18:8",
-                "endpoint_z_field": "00:00:00:00:00:00:00:18: mia_s18-eth8",
+                "endpoint_z_field": "mia",
                 "vlan_z": "100"
             },
             {
                 "name": "Full_Feature_Circuit",
                 "endpoint_a": "00:00:00:00:00:00:00:18:13",
-                "endpoint_a_field": "00:00:00:00:00:00:00:18: mia_s18-eth13",
+                "endpoint_a_field": "mia",
                 "vlan_a": "104",
                 "endpoint_z": "00:00:00:00:00:00:00:18:8",
-                "endpoint_z_field": "00:00:00:00:00:00:00:18: mia_s18-eth8",
+                "endpoint_z_field": "mia",
                 "vlan_z": "100",
                 "service_level": "5",
                 "priority": "high",
@@ -104,33 +104,41 @@ def evc_test_data():
             {
                 "name": "VLAN_Range_Circuit",
                 "endpoint_a": "00:00:00:00:00:00:00:18:13",
+                "endpoint_a_field": "mia",
                 "vlan_a": "[100, 200]",
                 "endpoint_z": "00:00:00:00:00:00:00:18:8",
+                "endpoint_z_field": "mia",
                 "vlan_z": "[100, 200]"
             }
         ],
         "invalid_circuits": [
             {
                 "name": "",
-                "endpoint_a": "Switch01:eth1",
+                "endpoint_a": "00:00:00:00:00:00:00:18:13",
+                "endpoint_a_field": "Switch01:eth1",
                 "vlan_a": "100",
-                "endpoint_z": "Switch02:eth1",
+                "endpoint_z": "00:00:00:00:00:00:00:18:8",
+                "endpoint_z_field": "Switch02:eth1",
                 "vlan_z": "100",
                 "expected_error": "Circuit Name is required"
             },
             {
                 "name": "Invalid_VLAN_Test",
-                "endpoint_a": "Switch01:eth1",
+                "endpoint_a": "00:00:00:00:00:00:00:18:13",
+                "endpoint_a_field": "mia",
                 "vlan_a": "invalid_vlan",
-                "endpoint_z": "Switch02:eth1",
-                "vlan_z": "100",
+                "endpoint_z": "00:00:00:00:00:00:00:18:8",
+                "endpoint_z_field": "mia",
+                "vlan_z": "invalid_vlan",
                 "expected_error": "Invalid VLAN format"
             },
             {
                 "name": "Invalid_Endpoint_Test",
-                "endpoint_a": "NonExistentSwitch:eth1",
+                "endpoint_a": "00:00:00:00:00:00:00:18:13",
+                "endpoint_a_field": "NonExistentSwitch:eth1",
                 "vlan_a": "100",
-                "endpoint_z": "Switch02:eth1",
+                "endpoint_z": "00:00:00:00:00:00:00:18:8",
+                "endpoint_z_field": "NonExistentSwitch:eth2",
                 "vlan_z": "100",
                 "expected_error": "Endpoint not found"
             }

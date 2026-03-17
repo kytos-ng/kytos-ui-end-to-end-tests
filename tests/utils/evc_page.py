@@ -92,19 +92,30 @@ class EVCPage:
         # Fill endpoint A
         endpoint_a_input = self.driver.find_element(*self.SELECTORS['endpoint_a_input'])
         endpoint_a_input.clear()
-        endpoint_a_input.send_keys(circuit_data["endpoint_a"])
+        endpoint_a_input.send_keys(circuit_data["endpoint_a_field"])
         time.sleep(3)
-        
-        # Fill endpoint Z
-        endpoint_z_input = self.driver.find_element(*self.SELECTORS['endpoint_z_input'])
-        endpoint_z_input.clear()
-        endpoint_z_input.send_keys(circuit_data["endpoint_z"])
-        
+        li_elements=self.driver.find_elements(By.CLASS_NAME,"autocomplete-result")
+        for li in li_elements:
+            if circuit_data["endpoint_a"] in li.text:
+                li.click()
+                break
+
         # Fill VLAN A
         vlan_a_input = self.driver.find_element(*self.SELECTORS['vlan_a_input'])
         vlan_a_input.clear()
         vlan_a_input.send_keys(str(circuit_data["vlan_a"]))
         
+        # Fill endpoint Z
+        endpoint_z_input = self.driver.find_element(*self.SELECTORS['endpoint_z_input'])
+        endpoint_z_input.clear()
+        endpoint_z_input.send_keys(circuit_data["endpoint_z_field"])
+        time.sleep(3)
+        li_elements = self.driver.find_elements(By.CLASS_NAME, "autocomplete-result")
+        for li in li_elements:
+            if circuit_data["endpoint_z"] in li.text:
+                li.click()
+                break
+
         # Fill VLAN Z
         vlan_z_input = self.driver.find_element(*self.SELECTORS['vlan_z_input'])
         vlan_z_input.clear()
@@ -224,3 +235,7 @@ class EVCPage:
         """Gets the name of the first EVC in the installed EVC table."""
         evc_created = self.driver.find_element(*self.SELECTORS['evc_table_first_row_name'])
         return evc_created.text
+
+    def check_status_code(self):
+        console_msg=self.driver.find_element(By.XPATH,"//*[@id='notifications']/div/div/div/div/h4")
+        return console_msg.text

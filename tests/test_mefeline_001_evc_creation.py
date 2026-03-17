@@ -36,14 +36,14 @@ class TestPositiveEVCCreation:
         self.evc_page.fill_circuit_form(circuit_data)
         self.evc_page.submit_form()
 
+        # Verify via API
+        circuit_id = self.evc_page.verify_circuit_via_api(circuit_data["name"])
+        assert circuit_id is not None, f"Circuit '{circuit_data['name']}' not found in API"
+
         # Original verification logic
         self.evc_page.click_list_installed_evcs()
         evc_created_text = self.evc_page.get_first_evc_name_from_table()
         assert evc_created_text == circuit_data["name"], "Error creating circuit"
-
-        # Verify via API
-        circuit_id = self.evc_page.verify_circuit_via_api(circuit_data["name"])
-        assert circuit_id is not None, f"Circuit '{circuit_data['name']}' not found in API"
         
         print(f"✅ TC_001 PASSED. EVC with circuit id {circuit_id} created and verified successfully")
 
@@ -66,6 +66,11 @@ class TestPositiveEVCCreation:
         circuit_id = self.evc_page.verify_circuit_via_api(circuit_data["name"])
         assert circuit_id is not None, f"Circuit '{circuit_data['name']}' not found in API"
 
+        # Original verification logic
+        self.evc_page.click_list_installed_evcs()
+        evc_created_text = self.evc_page.get_first_evc_name_from_table()
+        assert evc_created_text == circuit_data["name"], "Error creating circuit"
+
         print(f"✅ TC_002 PASSED: Full-feature circuit created with ID {circuit_id}")
 
     def test_003_create_evc_vlan_range(self, evc_test_data):
@@ -87,4 +92,66 @@ class TestPositiveEVCCreation:
         circuit_id = self.evc_page.verify_circuit_via_api(circuit_data["name"])
         assert circuit_id is not None, f"Circuit '{circuit_data['name']}' not found in API"
 
+        # Original verification logic
+        self.evc_page.click_list_installed_evcs()
+        evc_created_text = self.evc_page.get_first_evc_name_from_table()
+        assert evc_created_text == circuit_data["name"], "Error creating circuit"
+
         print(f"✅ TC_003 PASSED: VLAN range circuit created with ID {circuit_id}")
+
+    def test_004_invalid_name_circuit(self, evc_test_data):
+        """
+        Create EVC with invalid name
+
+        Objective: Verify EVC creation errors
+        """
+        circuit_data = evc_test_data["invalid_circuits"][0]
+
+        # Navigate to EVC creation form
+        assert self.evc_page.navigate_to_evc_form(), "Failed to navigate to EVC creation form"
+
+        # Fill and submit form with VLAN ranges
+        self.evc_page.fill_circuit_form(circuit_data)
+        self.evc_page.submit_form()
+        console_msg=self.evc_page.check_status_code()
+        assert console_msg == "Circuit Not Created (400):", "Test case failed"
+
+        print(f"✅ TC_004 PASSED: invalid circuit name. Circuit not created")
+
+    def test_005_invalid_vlan(self, evc_test_data):
+            """
+            Create EVC with invalid VLAN
+
+            Objective: Verify EVC creation errors
+            """
+            circuit_data = evc_test_data["invalid_circuits"][1]
+
+            # Navigate to EVC creation form
+            assert self.evc_page.navigate_to_evc_form(), "Failed to navigate to EVC creation form"
+
+            # Fill and submit form with VLAN ranges
+            self.evc_page.fill_circuit_form(circuit_data)
+            self.evc_page.submit_form()
+            console_msg = self.evc_page.check_status_code()
+            assert console_msg == "Circuit Not Created (400):", "Test case failed"
+
+            print(f"✅ TC_005 PASSED: invalid VLAN. Circuit not created")
+
+    def test_006_invalid_endpoint(self, evc_test_data):
+            """
+            Create EVC with invalid endpoint
+
+            Objective: Verify EVC creation errors
+            """
+            circuit_data = evc_test_data["invalid_circuits"][2]
+
+            # Navigate to EVC creation form
+            assert self.evc_page.navigate_to_evc_form(), "Failed to navigate to EVC creation form"
+
+            # Fill and submit form with VLAN ranges
+            self.evc_page.fill_circuit_form(circuit_data)
+            self.evc_page.submit_form()
+            console_msg = self.evc_page.check_status_code()
+            assert console_msg == "Circuit Not Created (400):", "Test case failed"
+
+            print(f"✅ TC_006 PASSED: invalid endpoint. Circuit not created")
