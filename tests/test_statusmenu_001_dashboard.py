@@ -17,7 +17,7 @@ class TestStatusMenu:
     def test_001_check_switches(self):
 
         # Navigate to status menu
-        assert self.statusmenu_page.navigate_to_statusmenu(), "Failed to navigate to Pathfinder form"
+        assert self.statusmenu_page.navigate_to_statusmenu(), "Failed to navigate to Status menu"
 
         # check number of switches,links and interfaces and filters
         assert self.statusmenu_page.check_switches(), "switches data not consistent"
@@ -26,3 +26,10 @@ class TestStatusMenu:
         assert self.statusmenu_page.check_links_filters(), "links filters not working"
         assert self.statusmenu_page.check_interfaces(), "interfaces data not consistent"
         assert self.statusmenu_page.check_interfaces_filters(), "interfaces filters not working"
+
+    def test_002_check_graphs(self):
+        # Navigate to status menu
+        assert self.statusmenu_page.navigate_to_statusmenu(), "Failed to navigate to Status menu"
+
+        # check graphs
+        assert self.statusmenu_page.check_graphs(), "no interface charts"
