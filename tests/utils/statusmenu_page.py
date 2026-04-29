@@ -48,6 +48,16 @@ class StatusmenuPage:
 
         return True
 
+    def check_graphs(self):
+        table = self.driver.find_element(By.XPATH, "//*[@id='app']/div[1]/div/div[2]/div/div[2]/div/div[2]/div/div[1]/div/div[2]/table/tbody/tr[1]/td[2]").click()
+        time.sleep(2)
+        interface=self.driver.find_element(By.XPATH,"//*[@id='k-info-wrapper-id']/div/div[6]/label").click()
+        time.sleep(2)
+        charts=self.driver.find_elements(By.CLASS_NAME,"k-interface")
+        print(len(charts))
+        if len(charts)>0:
+            return True
+
     def check_switches(self):
 
         table = self.driver.find_element(By.XPATH, "//table[@data-test='switch_table']")
