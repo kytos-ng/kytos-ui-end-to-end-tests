@@ -97,7 +97,7 @@ class SDNTRACEPage:
         time.sleep(3)
         
         # Fill optional fields if provided
-        for field in ['dl_vlan', 'dl_type', 'dl_src', 'dl_src', 'dl_dst', 'nw_src', 'nw_dst', 'nw_proto', 'nw_tos', 'tp_src', 'tp_dst']:
+        for field in ['dl_vlan', 'dl_type', 'dl_src', 'dl_dst', 'nw_src', 'nw_dst', 'nw_proto', 'nw_tos', 'tp_src', 'tp_dst']:
             if data.get(field):
                 try:
                     service_select = self.driver.find_element(*self.SELECTORS[field])
@@ -123,9 +123,8 @@ class SDNTRACEPage:
             messages['success'] = None
         
         try:
-            error_element = self.driver.find_element(*self.SELECTORS['error_message'])
+            error_element = self.driver.find_element(*self.SELECTORS['form_message_description'])
             messages['error'] = error_element.text
-            pass
         except NoSuchElementException:
             messages['error'] = None
         
