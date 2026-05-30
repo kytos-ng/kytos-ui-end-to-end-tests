@@ -54,15 +54,28 @@ def driver(default_timeout):
     if os.getenv("HEADLESS", "true").lower() != "false":
         options.add_argument("--headless=new")
         
-    # Use the specified path for chromedriver
-    try:
-        service = Service("/usr/local/bin/chromedriver")
-        driver = webdriver.Chrome(service=service, options=options)
-        print("\nChromeDriver successfully initialized.")
-    except Exception as e:
-        print(f"\nError initializing ChromeDriver: {e}")
-        # Fallback to system path if service path fails
-        driver = webdriver.Chrome(options=options)
+    # Remote Selenium (Docker): set SELENIUM_URL=http://chrome:4444/wd/hub
+    # Local Chrome: leave SELENIUM_URL unset
+    selenium_url = os.getenv("SELENIUM_URL")
+    if selenium_url:
+        driver = webdriver.Remote(command_executor=selenium_url, options=options)
+        print(f"\nRemote WebDriver initialized at {selenium_url}.")
+    else:
+        try:
+            service = Service("/usr/local/bin/chromedriver")
+            driver = webdriver.Chrome(service=service, options=options)
+            print("\nChromeDriver initialized from /usr/local/bin/chromedriver.")
+        except Exception:
+            from webdriver_manager.chrome import ChromeDriverManager
+            import os as _os
+            wdm_path = ChromeDriverManager().install()
+            binary = _os.path.join(_os.path.dirname(wdm_path), "chromedriver")
+            if _os.path.isfile(binary):
+                _os.chmod(binary, 0o755)
+                wdm_path = binary
+            service = Service(wdm_path)
+            driver = webdriver.Chrome(service=service, options=options)
+            print("\nChromeDriver initialized via webdriver-manager.")
 
     driver.implicitly_wait(default_timeout)
     

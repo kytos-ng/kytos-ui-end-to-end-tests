@@ -45,8 +45,8 @@ class SDNTRACEPage:
         'validation_error': (By.CSS_SELECTOR, ".validation-error, [class*='error']"),
 
         # Table element for verification
-        'trace_table_first_row_dpid': (By.XPATH,"//*[@id='k-info-wrapper-id']/div/div/div[1]/div/div/table/tbody/tr[1]/td[2]"),
-        'trace_table_first_row_port': (By.XPATH,"//*[@id='k-info-wrapper-id']/div/div/div[1]/div/div/table/tbody/tr[1]/td[5]"),
+        'trace_table_first_row_dpid': (By.XPATH, "//*[@id='k-info-wrapper-id']//table/tbody/tr[1]/td[2]"),
+        'trace_table_first_row_port': (By.XPATH, "//*[@id='k-info-wrapper-id']//table/tbody/tr[1]/td[5]"),
 
         'trace_table_rows': (By.CSS_SELECTOR, "div[id^='k-info-wrapper-id'] table tbody tr")
     }
@@ -155,20 +155,34 @@ class SDNTRACEPage:
         return None
 
     def click_view_all_traces(self):
-        """Clicks the 'View All Traces' button."""
+        """Clicks the 'View All Traces' button and waits for the trace table to render."""
         list_button = self.driver.find_element(*self.SELECTORS['view_all_traces_button'])
         list_button.click()
-        time.sleep(3) # Wait for the list to load
+        try:
+            self.wait.until(EC.presence_of_element_located(self.SELECTORS['trace_table_rows']))
+        except Exception:
+            pass
+        time.sleep(5)
 
     def get_first_dpid_from_table(self):
-        """Gets the first trace in the table."""
-        trace_dpid = self.driver.find_element(*self.SELECTORS['trace_table_first_row_dpid'])
-        return trace_dpid.text
-    
+        """Gets the DPID from the first row of the trace table."""
+        try:
+            element = self.wait.until(
+                EC.presence_of_element_located(self.SELECTORS['trace_table_first_row_dpid'])
+            )
+            return element.text
+        except Exception:
+            return ''
+
     def get_first_port_from_table(self):
-        """Gets the first trace in the table."""
-        trace_dpid = self.driver.find_element(*self.SELECTORS['trace_table_first_row_port'])
-        return trace_dpid.text
+        """Gets the port from the first row of the trace table."""
+        try:
+            element = self.wait.until(
+                EC.presence_of_element_located(self.SELECTORS['trace_table_first_row_port'])
+            )
+            return element.text
+        except Exception:
+            return ''
     
     def get_id_traces_in_table(self):
         """Return list of traces id in the table."""
