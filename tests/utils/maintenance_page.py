@@ -33,13 +33,11 @@ class MaintenancePage:
         'submit_button': (By.XPATH, "//button[contains(., 'Create Maintenance Window') and not(@disabled)]"),
         'reset_button': (By.XPATH, "//button[contains(., 'Reset') and not(@disabled)]"),
         'list_windows_button': (By.XPATH, "//button[contains(., 'List Maintenance Windows') and not(@disabled)]"),
-        
+
         # Messages
         'form_message_title': (By.CLASS_NAME, "notification-text notification-title"),
         'form_message_description': (By.CLASS_NAME, "notification-text notification-description"),
-        'validation_error': (By.CSS_SELECTOR, ".validation-error, [class*='error']"),
-        
-        'list_windows_button': (By.XPATH, "//button[contains(., 'List Maintenance Windows') and not(@disabled)]")
+        'validation_error': (By.CSS_SELECTOR, ".validation-error, [class*='error']")
     }
 
     def __init__(self, driver: WebDriver, base_url: str, api_url: str, default_timeout: int):
@@ -154,7 +152,7 @@ class MaintenancePage:
                         dt2 = datetime.fromtimestamp(inserted_time, tz=timezone.utc)
                         dt2 = dt2.strftime("%Y-%m-%dT%H:%M:%S%z")
                         if window.get('inserted_at') > dt2 \
-                            and window.get('description') == data['description'] \
+                            and window.get('description') == data.get('description') \
                             and window.get('start') == data['start_time'] \
                                 and window.get('end') == data['end_time']:
                             return window.get('id')

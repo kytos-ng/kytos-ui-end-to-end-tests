@@ -54,15 +54,28 @@ def driver(default_timeout):
     if os.getenv("HEADLESS", "true").lower() != "false":
         options.add_argument("--headless=new")
         
-    # Use the specified path for chromedriver
-    try:
-        service = Service("/usr/local/bin/chromedriver")
-        driver = webdriver.Chrome(service=service, options=options)
-        print("\nChromeDriver successfully initialized.")
-    except Exception as e:
-        print(f"\nError initializing ChromeDriver: {e}")
-        # Fallback to system path if service path fails
-        driver = webdriver.Chrome(options=options)
+    # Remote Selenium (Docker): set SELENIUM_URL=http://chrome:4444/wd/hub
+    # Local Chrome: leave SELENIUM_URL unset
+    selenium_url = os.getenv("SELENIUM_URL")
+    if selenium_url:
+        driver = webdriver.Remote(command_executor=selenium_url, options=options)
+        print(f"\nRemote WebDriver initialized at {selenium_url}.")
+    else:
+        try:
+            service = Service("/usr/local/bin/chromedriver")
+            driver = webdriver.Chrome(service=service, options=options)
+            print("\nChromeDriver initialized from /usr/local/bin/chromedriver.")
+        except Exception:
+            from webdriver_manager.chrome import ChromeDriverManager
+            import os as _os
+            wdm_path = ChromeDriverManager().install()
+            binary = _os.path.join(_os.path.dirname(wdm_path), "chromedriver")
+            if _os.path.isfile(binary):
+                _os.chmod(binary, 0o755)
+                wdm_path = binary
+            service = Service(wdm_path)
+            driver = webdriver.Chrome(service=service, options=options)
+            print("\nChromeDriver initialized via webdriver-manager.")
 
     driver.implicitly_wait(default_timeout)
     
@@ -195,6 +208,52 @@ def sdntrace_test_data():
             "nw_tos": "20",
         }
     }
+
+@pytest.fixture
+def sdntrace_cp_test_data():
+    """Test data for SDNTrace CP (Control Plane)"""
+    return {
+        "valid_basic_data": {
+            "dpid": "00:00:00:00:00:00:00:14",
+            "port": "13",
+        },
+        "valid_full_data": {
+            "dpid": "00:00:00:00:00:00:00:14",
+            "port": "13",
+            "dl_vlan": "300",
+            "dl_type": "2048",
+            "dl_src": "1",
+            "dl_dst": "a1:b2:c3:d4:e5:f6",
+            "nw_src": "10.10.10.1",
+            "nw_dst": "10.10.10.254",
+            "nw_proto": "6",
+            "nw_tos": "2",
+            "tp_src": "1234",
+            "tp_dst": "80",
+        },
+        "non_existent_dpid": {
+            "dpid": "00:00:00:00:00:00:00:01",
+            "port": "13",
+        },
+        "invalid_dpid": {
+            "dpid": "ff:ff:ff:ff:ff:ff:ff:ff",
+            "port": "13",
+        },
+        "non_existent_port": {
+            "dpid": "00:00:00:00:00:00:00:18",
+            "port": "9999",
+        },
+        "invalid_port": {
+            "dpid": "00:00:00:00:00:00:00:18",
+            "port": "abc",
+        },
+        "invalid_nw_tos": {
+            "dpid": "00:00:00:00:00:00:00:18",
+            "port": "13",
+            "nw_tos": "20",
+        },
+    }
+
 
 def get_future_time_data(days_from_now=2):
     """Generates start and end time data for a maintenance window in the near future."""
