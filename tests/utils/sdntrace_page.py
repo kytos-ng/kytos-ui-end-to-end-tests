@@ -13,35 +13,44 @@ class SDNTRACEPage:
     """
     SELECTORS = {
         # Navigation
-        'sdntrace_button': (By.CSS_SELECTOR, 'button[data-test="main-button"][title="Napp sdntrace"]'),
-        
-        # Form fields
-        'dpid': (By.XPATH, "//*[@id='dpid']/div/div/div/input"), 
-        'port': (By.XPATH, "//*[@id='in_port']/div/div/div/input"),
-        
-        # Optional fields
+        'sdntrace_button': (By.CSS_SELECTOR, 'button[title="Napp sdntrace"]'),
+
+        # Form fields. Anchored to the stable #dpid/#in_port wrapper ids and
+        # matched by placeholder rather than a fixed div/div/div depth, which
+        # breaks the moment an extra wrapper div is introduced.
+        'dpid': (By.XPATH, "//div[@id='dpid']//input[@placeholder='DPID']"),
+        'port': (By.XPATH, "//div[@id='in_port']//input[@placeholder='Port']"),
+
+        # Optional fields, scoped to the sdntrace panel and matched by
+        # placeholder (each one matches its field name exactly) instead of an
+        # absolute DOM position, which breaks every time the surrounding
+        # layout shifts.
         # Eth Parameters
-        'dl_vlan': (By.XPATH, "//*[@id='app']/div[1]/div/div[6]/div/div/div[1]/div/div[2]/div/div[1]/input"),
-        'dl_type': (By.XPATH, "//*[@id='app']/div[1]/div/div[6]/div/div/div[1]/div/div[2]/div/div[2]/input"),
-        'dl_src': (By.XPATH, "//*[@id='app']/div[1]/div/div[6]/div/div/div[1]/div/div[2]/div/div[3]/input"),
-        'dl_dst': (By.XPATH, "//*[@id='app']/div[1]/div/div[6]/div/div/div[1]/div/div[2]/div/div[4]/input"),
+        'dl_vlan': (By.CSS_SELECTOR, 'div[tooltip="Napp sdntrace"] input[placeholder="dl_vlan"]'),
+        'dl_type': (By.CSS_SELECTOR, 'div[tooltip="Napp sdntrace"] input[placeholder="dl_type"]'),
+        'dl_src': (By.CSS_SELECTOR, 'div[tooltip="Napp sdntrace"] input[placeholder="dl_src"]'),
+        'dl_dst': (By.CSS_SELECTOR, 'div[tooltip="Napp sdntrace"] input[placeholder="dl_dst"]'),
         #  IP Parameters
-        'nw_src': (By.XPATH, "//*[@id='app']/div[1]/div/div[6]/div/div/div[1]/div/div[3]/div/div[1]/div/div[1]/input"),
-        'nw_dst': (By.XPATH, "//*[@id='app']/div[1]/div/div[6]/div/div/div[1]/div/div[3]/div/div[1]/div/div[2]/input"),
-        'nw_proto': (By.XPATH, "//*[@id='app']/div[1]/div/div[6]/div/div/div[1]/div/div[3]/div/div[2]/input"),
-        'nw_tos': (By.XPATH, "//*[@id='app']/div[1]/div/div[6]/div/div/div[1]/div/div[3]/div/div[3]/input"),
+        'nw_src': (By.CSS_SELECTOR, 'div[tooltip="Napp sdntrace"] input[placeholder="nw_src"]'),
+        'nw_dst': (By.CSS_SELECTOR, 'div[tooltip="Napp sdntrace"] input[placeholder="nw_dst"]'),
+        'nw_proto': (By.CSS_SELECTOR, 'div[tooltip="Napp sdntrace"] input[placeholder="nw_proto"]'),
+        'nw_tos': (By.CSS_SELECTOR, 'div[tooltip="Napp sdntrace"] input[placeholder="nw_tos"]'),
         # tP Parameters
-        'tp_src': (By.XPATH, "//*[@id='app']/div[1]/div/div[6]/div/div/div[1]/div/div[4]/div/div[1]/input"),
-        'tp_dst': (By.XPATH, "//*[@id='app']/div[1]/div/div[6]/div/div/div[1]/div/div[4]/div/div[2]/input"),
+        'tp_src': (By.CSS_SELECTOR, 'div[tooltip="Napp sdntrace"] input[placeholder="tp_src"]'),
+        'tp_dst': (By.CSS_SELECTOR, 'div[tooltip="Napp sdntrace"] input[placeholder="tp_dst"]'),
 
         # Buttons
-        'submit_button': (By.XPATH, "//button[contains(., 'Start Trace') and not(@disabled)]"),
-        'reset_button': (By.XPATH, "//button[contains(., 'Reset') and not(@disabled)]"),
-        'view_all_traces_button': (By.XPATH, "//button[contains(., 'View All Traces') and not(@disabled)]"),
-        
+        'submit_button': (By.XPATH, "//div[@tooltip='Napp sdntrace']//button[contains(., 'Start Trace') and not(@disabled)]"),
+        'reset_button': (By.XPATH, "//div[@tooltip='Napp sdntrace']//button[contains(., 'Reset') and not(@disabled)]"),
+        'view_all_traces_button': (By.XPATH, "//div[@tooltip='Napp sdntrace']//button[contains(., 'View All Traces') and not(@disabled)]"),
+
         # Messages
-        'form_message_title': (By.CLASS_NAME, "notification-text notification-title"),
-        'form_message_description': (By.CLASS_NAME, "notification-text notification-description"),
+        # By.CLASS_NAME doesn't accept compound (space-separated) class
+        # values in Selenium - it raises InvalidSelectorException rather than
+        # matching, so these never worked. CSS_SELECTOR with both classes
+        # chained is the correct equivalent.
+        'form_message_title': (By.CSS_SELECTOR, ".notification-text.notification-title"),
+        'form_message_description': (By.CSS_SELECTOR, ".notification-text.notification-description"),
         'validation_error': (By.CSS_SELECTOR, ".validation-error, [class*='error']"),
 
         # Table element for verification

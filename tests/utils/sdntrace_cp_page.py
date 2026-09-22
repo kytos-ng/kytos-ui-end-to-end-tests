@@ -60,11 +60,17 @@ class SDNTraceCPPage:
     SELECTORS = {
         'sdntrace_cp_button': (
             By.CSS_SELECTOR,
-            'button[data-test="main-button"][title*="sdntrace_cp"]',
+            'button[title*="sdntrace_cp"]',
         ),
-        'dpid':         (By.XPATH, "//*[@id='dpid']/div/div/div/input"),
-        'port':         (By.XPATH, "//*[@id='in_port']/div/div/div/input"),
-        'reset_button': (By.XPATH, "//button[contains(., 'Reset')]"),
+        # Anchored to the stable #dpid/#in_port wrapper ids and matched by
+        # placeholder rather than a fixed div/div/div depth, which breaks the
+        # moment an extra wrapper div is introduced. _find_visible() still
+        # disambiguates from sdntrace's identically-id'd fields by visibility.
+        'dpid':         (By.XPATH, "//div[@id='dpid']//input[@placeholder='DPID']"),
+        'port':         (By.XPATH, "//div[@id='in_port']//input[@placeholder='Port']"),
+        # Scoped to this panel so a visible Reset button belonging to another
+        # napp can never be picked up by mistake.
+        'reset_button': (By.XPATH, "//div[@tooltip='Napp sdntrace_cp']//button[contains(., 'Reset')]"),
     }
 
     def __init__(self, driver: WebDriver, base_url: str, api_url: str, default_timeout: int):
