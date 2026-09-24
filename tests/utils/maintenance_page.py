@@ -15,24 +15,28 @@ class MaintenancePage:
 
     SELECTORS = {
         # Navigation
-        'maintenance_button': (By.CSS_SELECTOR, 'button[data-test="main-button"][title="Maintenace"]'),
-        
-        # Form fields
-        'description': (By.XPATH, "//*[@id='app']/div[1]/div/div[4]/div/div[1]/div/div[1]/input"),
-        'start_time': (By.XPATH, "//*[@id='app']/div[1]/div/div[4]/div/div[1]/div/div[2]/div[1]/input"),
-        'end_time': (By.XPATH, "//*[@id='app']/div[1]/div/div[4]/div/div[1]/div/div[2]/div[2]/input"),
-        'time_date': (By.XPATH, "//*[@id='app']/div[1]/div/div[4]/div/div[1]/div/div[3]"), 
-        
-        'switches': (By.XPATH, "//*[@id='app']/div[1]/div/div[4]/div/div[1]/div/label[1]/select"),
-        'interfaces': (By.XPATH, "//*[@id='app']/div[1]/div/div[4]/div/div[1]/div/label[2]/select"),
-        'links': (By.XPATH, "//*[@id='app']/div[1]/div/div[4]/div/div[1]/div/label[3]/select"),
+        'maintenance_button': (By.CSS_SELECTOR, 'button[title="Maintenace"]'),
 
-        'force': (By.XPATH, "//*[@id='app']/div[1]/div/div[4]/div/div[1]/div/div[4]/label/span"),
-        
+        # Form fields (scoped to the Maintenance panel, matched by stable
+        # attributes/visible text instead of an absolute DOM position, which
+        # breaks every time the surrounding layout shifts)
+        'description': (By.CSS_SELECTOR, 'div[tooltip="Maintenace"] input[placeholder="Description"]'),
+        'start_time': (By.XPATH, "//div[@tooltip='Maintenace']//p[text()='Start Time']/following-sibling::div[1]/input"),
+        'end_time': (By.XPATH, "//div[@tooltip='Maintenace']//p[text()='End time']/following-sibling::div[1]/input"),
+
+        'switches': (By.XPATH, "//div[@tooltip='Maintenace']//label[.//div[contains(@class,'k-select__title')][contains(., 'List of Switches')]]//select"),
+        'interfaces': (By.XPATH, "//div[@tooltip='Maintenace']//label[.//div[contains(@class,'k-select__title')][contains(., 'List of Interfaces')]]//select"),
+        'links': (By.XPATH, "//div[@tooltip='Maintenace']//label[.//div[contains(@class,'k-select__title')][contains(., 'List of Links')]]//select"),
+
+        # The underlying checkbox input is visually hidden by the toggle-switch
+        # styling and isn't clickable; the visible ".slider" is what the user
+        # actually clicks.
+        'force': (By.XPATH, "//div[@tooltip='Maintenace']//div[contains(@class,'k-checkbox-wrap')][contains(., 'Force')]//span[@class='slider']"),
+
         # Buttons
-        'submit_button': (By.XPATH, "//button[contains(., 'Create Maintenance Window') and not(@disabled)]"),
-        'reset_button': (By.XPATH, "//button[contains(., 'Reset') and not(@disabled)]"),
-        'list_windows_button': (By.XPATH, "//button[contains(., 'List Maintenance Windows') and not(@disabled)]"),
+        'submit_button': (By.XPATH, "//div[@tooltip='Maintenace']//button[contains(., 'Create Maintenance Window') and not(@disabled)]"),
+        'reset_button': (By.XPATH, "//div[@tooltip='Maintenace']//button[contains(., 'Reset') and not(@disabled)]"),
+        'list_windows_button': (By.XPATH, "//div[@tooltip='Maintenace']//button[contains(., 'List Maintenance Windows') and not(@disabled)]"),
 
         # Messages
         'form_message_title': (By.CLASS_NAME, "notification-text notification-title"),
