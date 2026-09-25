@@ -39,8 +39,12 @@ class MaintenancePage:
         'list_windows_button': (By.XPATH, "//div[@tooltip='Maintenace']//button[contains(., 'List Maintenance Windows') and not(@disabled)]"),
 
         # Messages
-        'form_message_title': (By.CLASS_NAME, "notification-text notification-title"),
-        'form_message_description': (By.CLASS_NAME, "notification-text notification-description"),
+        # By.CLASS_NAME doesn't accept compound (space-separated) class
+        # values in Selenium - it raises InvalidSelectorException rather than
+        # matching, so these never worked. CSS_SELECTOR with both classes
+        # chained is the correct equivalent.
+        'form_message_title': (By.CSS_SELECTOR, ".notification-text.notification-title"),
+        'form_message_description': (By.CSS_SELECTOR, ".notification-text.notification-description"),
         'validation_error': (By.CSS_SELECTOR, ".validation-error, [class*='error']")
     }
 
