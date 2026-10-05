@@ -22,18 +22,18 @@ class PathfinderPage:
         'destination_input': (By.XPATH, "//*[@id='destination']/div/div/div/input"),
         'paths': (By.XPATH,"//*[@id='app']/section[2]/div[1]/div/button[1]"),
         'path_table': (By.CLASS_NAME,"k-property-panel"),
-        'bandwidth': (By.XPATH, "//*[@id='app']/div[1]/div/div[8]/div/div/div/div/div[5]/div[3]/input"),
-        'reliability': (By.XPATH, "//*[@id='app']/div[1]/div/div[8]/div/div/div/div/div[6]/div[3]/input"),
-        'delay': (By.XPATH, "//*[@id='app']/div[1]/div/div[8]/div/div/div/div/div[7]/div[3]/input"),
+        'bandwidth': (By.XPATH, "//*[@id='app']/div[1]/div/div[6]/div/div/div/div/div[5]/div[3]/input"),
+        'reliability': (By.XPATH, "//*[@id='app']/div[1]/div/div[6]/div/div/div/div/div[6]/div[3]/input"),
+        'delay': (By.XPATH, "//*[@id='app']/div[1]/div/div[6]/div/div/div/div/div[7]/div[3]/input"),
 
         # Optional fields
-        'utilization': (By.XPATH, "//*[@id='app']/div[1]/div/div[8]/div/div/div/div/div[8]/div[3]/input"),
-        'priority': (By.XPATH, "//*[@id='app']/div[1]/div/div[8]/div/div/div/div/div[9]/div[3]/input"),
-        'spf_max_paths': (By.XPATH, "//*[@id='app']/div[1]/div/div[8]/div/div/div/div/div[14]/div/div/input"),
-        'spf_max_path_cost': (By.XPATH, "//*[@id='app']/div[1]/div/div[8]/div/div/div/div/div[15]/div/div/input"),
+        'utilization': (By.XPATH, "//*[@id='app']/div[1]/div/div[6]/div/div/div/div/div[8]/div[3]/input"),
+        'priority': (By.XPATH, "//*[@id='app']/div[1]/div/div[6]/div/div/div/div/div[9]/div[3]/input"),
+        'spf_max_paths': (By.XPATH, "//*[@id='app']/div[1]/div/div[6]/div/div/div/div/div[14]/div/div/input"),
+        'spf_max_path_cost': (By.XPATH, "//*[@id='app']/div[1]/div/div[6]/div/div/div/div/div[15]/div/div/input"),
 
         # Buttons
-        'submit_button': (By.XPATH, "//*[@id='app']/div[1]/div/div[8]/div/div/div/div/div[16]/button")
+        'submit_button': (By.XPATH, "//*[@id='app']/div[1]/div/div[6]/div/div/div/div/div[16]/button")
     }
 
     def __init__(self, driver: WebDriver, base_url: str, api_url: str, default_timeout: int):
